@@ -7,18 +7,25 @@
 
 # FUNCTIONS
 #======================================================
+
 # create a unique readme
 readme() {
-    read -p "Enter project name: " name
-    read -p "Enter a description: " desc
 
-    readme="${projectDir}README.md"
+    read -p "create README.md? [y/n]: " readmeConfirmation
 
-    echo "# $name" > "$readme"
-    echo "## by [Andrew Barlow](https://github.com/dandrewbarlow)" >> "$readme"
-    echo "" >> "$readme"
-    echo "### Description" >> "$readme"
-    echo "$desc" >> "$readme"
+    if [[ "$readmeConfirmation" =~ [yY] ]]
+    then
+        read -p "Enter project name: " name
+        read -p "Enter a description: " desc
+
+        readme="${projectDir}README.md"
+
+        echo "# $name" > "$readme"
+        echo "## by [Andrew Barlow](https://github.com/dandrewbarlow)" >> "$readme"
+        echo "" >> "$readme"
+        echo "### Description" >> "$readme"
+        echo "$desc" >> "$readme"
+    fi
 }
 
 # c++ project
@@ -27,7 +34,7 @@ cpp () {
 
     read -p "include GTK? [y/n]: " gtk
 
-    if [[ "$gtk" = [yY] ]]
+    if [[ "$gtk" =~ [yY] ]]
     then
         git checkout gtk
     fi
@@ -38,7 +45,7 @@ c() {
 
     read -p "include GTK? [y/n]: " gtk
 
-    if [[ "$gtk" = [yY] ]]
+    if [[ "$gtk" =~ [yY] ]]
     then
         git checkout gtk
     fi   
@@ -68,9 +75,26 @@ web() {
     fi
 }
 
+latex() {
+    git clone https://github.com/dandrewbarlow/latex-template "$projectDir"
+
+    read -p "Custom Title? [empty for no or type title]: " latexTitle
+
+    if [ ! -z "$latexTitle" ]
+    then
+        for file in "${projectDir}main"*
+        do
+            sed -i '' -e "s/main/$latexTitle/g" "$file"
+            mv "$file" "${file/main/$latexTitle}"
+            rm -rf "$file"
+        done
+
+    fi
+}
+
 # Pick what kind of project to initialize
 chooseProject() {
-    read -p "Choose project type [C++/C/Python/Web]: " projectType
+    read -p "Choose project type [C++/C/Python/Web/Latex]: " projectType
 
     case $projectType in
         [cC]\+\+)
@@ -85,6 +109,9 @@ chooseProject() {
         [Ww]eb)
             web
             ;;
+        [Ll]atex)
+            latex
+            ;;
         *)
             echo "Error: invalid input"
     esac
@@ -96,8 +123,7 @@ chooseProject() {
 
 createRepo() {
 
-    echo "Deleting template git repo [using superuser priveledges]"
-    sudo rm -r "${projectDir}.git"
+    rm -rf "${projectDir}.git"
 
     read -p "Create new git repo? [y/n]: " git
 

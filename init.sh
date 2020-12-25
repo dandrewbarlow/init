@@ -4,6 +4,9 @@
 # github.com/dandrewbarlow
 # A simple script to quickly setup a project from my templates
 
+
+# FUNCTIONS
+#======================================================
 # create a unique readme
 readme() {
     read -p "Enter project name: " name
@@ -28,6 +31,17 @@ cpp () {
     then
         git checkout gtk
     fi
+}
+
+c() {
+    git clone https://github.com/dandrewbarlow/c-template/tree/main "$projectDir"
+
+    read -p "include GTK? [y/n]: " gtk
+
+    if [[ "$gtk" = [yY] ]]
+    then
+        git checkout gtk
+    fi   
 }
 
 # python project
@@ -56,11 +70,14 @@ web() {
 
 # Pick what kind of project to initialize
 chooseProject() {
-    read -p "Choose project type [C++/Python/Web]: " projectType
+    read -p "Choose project type [C++/C/Python/Web]: " projectType
 
     case $projectType in
         [cC]\+\+)
             cpp
+            ;;
+        [cC])
+            c
             ;;
         [pP]ython)
             python
@@ -90,6 +107,9 @@ createRepo() {
     fi
 }
 
+
+# SCRIPT
+#======================================================
 read -p "Initialize new project in current directory? (Must be empty) [y/n]: " confirmation
 
 if [[ "$confirmation" =~ [yY] ]]

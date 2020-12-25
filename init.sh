@@ -110,6 +110,7 @@ then
         chooseProject
     else
         echo "Ok then"
+        exit 1
     fi
     
 else

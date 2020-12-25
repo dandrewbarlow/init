@@ -90,10 +90,18 @@ createRepo() {
     fi
 }
 
-read -p "Initialize new project in current directory? [y/n]: " confirmation
+read -p "Initialize new project in current directory? (Must be empty) [y/n]: " confirmation
 
 if [[ "$confirmation" =~ [yY] ]]
 then
+    # check for files
+    files=$(ls | wc -l)
+    if [ $files -gt 0 ]
+    then
+        echo "Error: directory not empty"
+        exit 1
+    fi
+
     projectDir="./"
     chooseProject
 

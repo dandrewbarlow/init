@@ -86,7 +86,7 @@ createRepo() {
 
     if [[ "$git" =~ [yY] ]]
     then 
-        git init
+        git init "$projectDir"
     fi
 }
 

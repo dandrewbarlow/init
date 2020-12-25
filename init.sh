@@ -28,21 +28,11 @@ cpp () {
     then
         git checkout gtk
     fi
-
-    echo "Deleting template git repo [using superuser priveledges]"
-    sudo rm -r "${projectDir}.git"
-    
-    readme
 }
 
 # python project
 python () {
     git clone https://github.com/dandrewbarlow/python-template "$projectDir"
-    
-    echo "Deleting template git repo [using superuser priveledges]"
-    sudo rm -r "${projectDir}.git"
-
-    readme
 }
 
 # website
@@ -62,11 +52,6 @@ web() {
             npm install --save-dev gulp gulp-sass browser-sync gulp-autoprefixer gulp-sourcemaps
         fi
     fi
-
-    echo "Deleting template git repo [using superuser priveledges]"
-    sudo rm -r "${projectDir}.git"
-
-    readme
 }
 
 # Pick what kind of project to initialize
@@ -87,10 +72,16 @@ chooseProject() {
             echo "Error: invalid input"
     esac
 
+    readme
+
     createRepo
 }
 
 createRepo() {
+
+    echo "Deleting template git repo [using superuser priveledges]"
+    sudo rm -r "${projectDir}.git"
+
     read -p "Create new git repo? [y/n]: " git
 
     if [[ "$git" =~ [yY] ]]

@@ -4,19 +4,23 @@
 # github.com/dandrewbarlow
 # A simple script to quickly setup a project from my templates
 
+# create a unique readme
 readme() {
     read -p "Enter project name: " name
     read -p "Enter a description: " desc
 
-    echo "# $name" > README.md
-    echo "## by [Andrew Barlow](https://github.com/dandrewbarlow)" >> README.md
-    echo "" >> README.md
-    echo "### Description" >> README.md
-    echo "$desc" >> README.md
+    readme="${projectDir}README.md"
+
+    echo "# $name" > "$readme"
+    echo "## by [Andrew Barlow](https://github.com/dandrewbarlow)" >> "$readme"
+    echo "" >> "$readme"
+    echo "### Description" >> "$readme"
+    echo "$desc" >> "$readme"
 }
 
+# c++ project
 cpp () {
-    git clone https://github.com/dandrewbarlow/cpp-template ./
+    git clone https://github.com/dandrewbarlow/cpp-template "$projectDir"
 
     read -p "include GTK? [y/n]: " gtk
 
@@ -24,45 +28,49 @@ cpp () {
     then
         git checkout gtk
     fi
-    echo "Superuser permissions required to remove template git repo"
-    
-    sudo rm -r .git
+
+    echo "Deleting template git repo [using superuser priveledges]"
+    sudo rm -r "${projectDir}.git"
     
     readme
 }
 
+# python project
 python () {
-    git clone https://github.com/dandrewbarlow/python-template ./
+    git clone https://github.com/dandrewbarlow/python-template "$projectDir"
     
-    echo "Superuser permissions required to remove template git repo"
-    sudo rm -r .git
+    echo "Deleting template git repo [using superuser priveledges]"
+    sudo rm -r "${projectDir}.git"
 
     readme
 }
 
+# website
 web() {
-    git clone https://github.com/dandrewbarlow/Boilerplate ./
+    git clone https://github.com/dandrewbarlow/Boilerplate "$projectDir"
+    
     read -p "Initialize a node.js package? [y/n]: " node
+
     if [[ "$node" =~ [yY] ]]
     then
         npm init
+        
         read -p "Install gulp & browser-sync? [y/n]: " gulp
+
         if [[ "$gulp" =~ [yY] ]]
         then
             npm install --save-dev gulp gulp-sass browser-sync gulp-autoprefixer gulp-sourcemaps
         fi
     fi
 
-    echo "Superuser permissions required to remove template git repo"
-    sudo rm -r .git
+    echo "Deleting template git repo [using superuser priveledges]"
+    sudo rm -r "${projectDir}.git"
 
     readme
 }
 
-read -p "Initialize new project in current directory? [y/n]: " confirmation
-
-if [[ "$confirmation" =~ [yY] ]]
-then
+# Pick what kind of project to initialize
+chooseProject() {
     read -p "Choose project type [C++/Python/Web]: " projectType
 
     case $projectType in
@@ -78,9 +86,41 @@ then
         *)
             echo "Error: invalid input"
     esac
-else if [[ "$confirmation" =~ [nN] ]]
+
+    createRepo
+}
+
+createRepo() {
+    read -p "Create new git repo? [y/n]: " git
+
+    if [[ "$git" =~ [yY] ]]
+    then 
+        git init
+    fi
+}
+
+read -p "Initialize new project in current directory? [y/n]: " confirmation
+
+if [[ "$confirmation" =~ [yY] ]]
 then
-    echo "Ok then"
+    projectDir="./"
+    chooseProject
+
+elif [[ "$confirmation" =~ [nN] ]]
+then
+
+    read -p "Initialize new project in new directory? [y/n]: " newDir
+
+    if [[ "$newDir" =~ [yY] ]]
+    then 
+        read -p "Enter new directory name: " dirName
+        mkdir "$dirName"
+        projectDir="$dirName/"
+        chooseProject
+    else
+        echo "Ok then"
+    fi
+    
 else
-    echo ""
+    echo "Error: Invalid input"
 fi

@@ -92,9 +92,28 @@ latex() {
     fi
 }
 
+# p5.js project
+p5() {
+    # Download empty index.html file
+    wget -q https://raw.githubusercontent.com/processing/p5.js/main/lib/empty-example/index.html "$projectDir"
+    # fix p5 script location, remove p5.sound reference entirely
+    sed -i '' -e "s/..\/p5/.\/p5/g" "$projectDir/index.html"
+    sed -i '' -e "/p5.sound.min.js/d" "$projectDir/index.html"
+    # download p5.js sketch file
+    wget -q https://raw.githubusercontent.com/processing/p5.js/main/lib/empty-example/sketch.js "$projectDir"
+    # Download p5.min.js
+    wget -q https://github.com/processing/p5.js/releases/download/1.2.0/p5.min.js
+
+    read -p "Custom title? (empty for no): " p5Title
+    if [ ! -z p5Title ] 
+    then
+        sed -i '' -e "s/p5.js example/$p5Title/g" "$projectDir/index.html"
+    fi
+}
+
 # Pick what kind of project to initialize
 chooseProject() {
-    read -p "Choose project type [C++/C/Python/Web/Latex]: " projectType
+    read -p "Choose project type [C++/C/Python/Web/p5/Latex]: " projectType
 
     case $projectType in
         [cC]\+\+)
@@ -112,8 +131,12 @@ chooseProject() {
         [Ll]atex)
             latex
             ;;
+        [pP]5)
+            p5
+            ;;
         *)
             echo "Error: invalid input"
+            exit 1
     esac
 
     readme

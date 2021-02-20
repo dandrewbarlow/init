@@ -153,6 +153,14 @@ createRepo() {
     if [[ "$git" =~ [yY] ]]
     then 
         git init "$projectDir"
+
+    	read -p "Create initial commit? [y/n]: " gitInit
+	if [[ "$gitInit" =~ [yY] ]]
+	then
+		git add "$projectDir"
+		git -C "$projectDir" commit -m "initial commit"
+	fi
+
     fi
 }
 

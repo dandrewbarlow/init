@@ -97,7 +97,7 @@ p5() {
     # Download empty index.html file
     wget -q https://raw.githubusercontent.com/processing/p5.js/main/lib/empty-example/index.html "$projectDir"
     # fix p5 script location, remove p5.sound reference entirely
-    sed -i '' -e "s/..\/p5/.\/p5/g" "$projectDir/index.html"
+    sed -i '' -e "s/..\/p5/.\/p5.min/g" "$projectDir/index.html"
     sed -i '' -e "/p5.sound.min.js/d" "$projectDir/index.html"
     # download p5.js sketch file
     wget -q https://raw.githubusercontent.com/processing/p5.js/main/lib/empty-example/sketch.js "$projectDir"
